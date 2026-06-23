@@ -1,0 +1,36 @@
+name: AI PR Reviewer
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+
+permissions:
+    contents: read
+    pull-requests: write
+
+jobs:
+    review:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Install dependencies
+              run: pip install requests
+
+            - name: Run AI reviewer
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_MODELS_TOKEN: ${{ secrets.GH_MODELS_TOKEN }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  REPO: ${{ github.repository }}
+                  BASE_SHA: ${{ github.event.pull_request.base.sha }}
+                  HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+              run: python /scripts/review.py
