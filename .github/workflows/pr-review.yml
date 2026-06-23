@@ -14,10 +14,17 @@ jobs:
     review:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
+            - name: Checkout calling repo
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
+
+            - name: Checkout reviewer scripts
+              uses: actions/checkout@v4
+              with:
+                  repository: rahultummala90/Github-PR-AI-Review
+                  path: pr-reviewer
+                  token: ${{ secrets.GH_MODELS_TOKEN }}
 
             - name: Set up Python
               uses: actions/setup-python@v5
@@ -35,4 +42,4 @@ jobs:
                   REPO: ${{ github.repository }}
                   BASE_SHA: ${{ github.event.pull_request.base.sha }}
                   HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-              run: python $GITHUB_WORKSPACE/scripts/review.py
+              run: python pr-reviewer/scripts/review.py
