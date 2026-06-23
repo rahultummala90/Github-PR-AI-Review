@@ -1,8 +1,10 @@
 name: AI PR Reviewer
 
 on:
-    pull_request:
-        types: [opened, synchronize, reopened]
+    workflow_call:
+        secrets:
+            GH_MODELS_TOKEN:
+                required: true
 
 permissions:
     contents: read
